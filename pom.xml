@@ -58,6 +58,7 @@
         <module>addons</module>
         <module>services</module>
         <module>ui</module>
+        <module>ui-wicket</module>
     </modules>
 
     <dependencyManagement>
