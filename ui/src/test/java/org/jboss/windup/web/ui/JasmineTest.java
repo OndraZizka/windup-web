@@ -38,7 +38,7 @@ public class JasmineTest extends AbstractUITest
     private WebElement getTestSummaryElement()
     {
         return getDriver().findElement(By
-                    .xpath("//span[contains(@class, 'jasmine-bar') and (contains(@class, 'jasmine-passed') or contains(@class, 'jasmine-failed') or contains(@class, 'jasmine-skipped'))]"));
+            .xpath("//span[contains(@class, 'jasmine-bar') and (contains(@class, 'jasmine-passed') or contains(@class, 'jasmine-failed') or contains(@class, 'jasmine-skipped'))]"));
     }
 
     @Test

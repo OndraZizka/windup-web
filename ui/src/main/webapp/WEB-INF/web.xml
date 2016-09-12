@@ -2,6 +2,8 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
+    <!-- Redirect all requests to /index.html, except the excluded paths.
+         Keeps angular routing working since the browser paths don't necessarily match files on disk. -->
     <filter>
         <filter-name>PathFilter</filter-name>
         <filter-class>org.jboss.windup.web.ui.PathFilter</filter-class>
@@ -11,7 +13,17 @@
         </init-param>
         <init-param>
             <param-name>ExcludedPathPrefixes</param-name>
-            <param-value>/authenticated.jsp;/not_loggedin.html;/index.html;/keycloak.json;/systemjs.config.js;/app/;/node_modules/;/tests/;/css/</param-value>
+            <param-value>
+                /authenticated.jsp;
+                /not_loggedin.html;
+                /index.html;
+                /test.html;
+                /keycloak.json;
+                /systemjs.config.js;
+                /app/;
+                /node_modules/;
+                /tests/;
+                /css/</param-value>
         </init-param>
     </filter>
 

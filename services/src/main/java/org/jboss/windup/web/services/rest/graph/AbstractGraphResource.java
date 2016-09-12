@@ -10,6 +10,7 @@ import java.util.Map;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
+import java.util.logging.Logger;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -20,12 +21,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import javax.persistence.TypedQuery;
+import org.jboss.windup.util.Logging;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class AbstractGraphResource
 {
+    private static final Logger LOG = Logging.get(AbstractGraphResource.class);
+    
     public static final String KEY_ID = "_id";
     public static final String TYPE = "_type";
     public static final String TYPE_VERTEX = "vertex";
@@ -52,6 +58,9 @@ public class AbstractGraphResource
         return uri.getBaseUri() + GraphResource.GRAPH_RESOURCE_URL + params;
     }
 
+    /**
+     * Stores given vertex as a Map, putting properties/values as keys/values of the Map.
+     */
     protected Map<String, Object> convertToMap(long executionID, Vertex vertex, Integer depth)
     {
         if (depth == null)
@@ -127,10 +136,52 @@ public class AbstractGraphResource
         return result;
     }
 
-    protected GraphContext getGraph(Long executionID)
+    /**
+     * Opens a graph for given execution.
+     */
+    protected GraphContext getGraphContext(Long executionID)
     {
-        WindupExecution execution = entityManager.find(WindupExecution.class, executionID);
-        Path graphPath = Paths.get(execution.getGroup().getOutputPath()).resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
-        return graphCache.getGraph(graphPath);
+        WindupExecution execution;
+        if (executionID == null || executionID == 0)
+            execution = getAnyExecution(); // Development purposes.
+        else
+            execution = entityManager.find(WindupExecution.class, executionID);
+        if (null == execution)
+            throw new IllegalArgumentException("Windup execution not found, ID: " + executionID);
+
+        return openGraph(execution);
     }
+    
+    /**
+     * Dev/test purposes.
+     */
+    private WindupExecution getAnyExecution() throws IllegalStateException {
+        List<WindupExecution> executions = getExecutions();
+        if (executions.size() == 0)
+            throw new IllegalStateException("No executions found.");
+        return executions.get(0);
+    }
+    
+
+    protected GraphContext openGraph(WindupExecution execution) throws IllegalStateException {
+        try
+        {
+            Path graphPath = Paths.get(execution.getGroup().getOutputPath()).resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
+            LOG.info("Opening graph at: " + graphPath);
+
+            ///GraphContextFactory graphContextFactory = servicesProducer.getGraphContextFactory();
+            ///return graphContextFactory.load(graphPath);
+            return graphCache.getGraph(graphPath);            
+        }
+        catch (Exception ex)
+        {
+            throw new IllegalStateException("Can't load graph for execution " + execution.getId() + ":\n\t" + ex.getMessage(), ex);
+        }
+    }
+    
+    protected List<WindupExecution> getExecutions()
+    {
+        TypedQuery<WindupExecution> queryExecutions = entityManager.createQuery("FROM WindupExecution AS ex", WindupExecution.class);
+        return queryExecutions.getResultList();
+    }    
 }

@@ -24,5 +24,6 @@ log.txt
 nb-configuration.xml
 nbactions.xml
 services/lib
-/ui/src/test/javascript/
+/ui/src/main/webapp/tests/unmarshaller/typescriptModels/
 /ui/src/main/webapp/app/tsModels/
+
