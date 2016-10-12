@@ -1,39 +1,46 @@
-=  Windup 2.x Maven Plugin
+=  Windup Web TypeScript Models Generator Maven Plugin
 
 == Overview
 
-Windup Maven plugin is created collaboratively on the Windup project.
-This `windup-maven-plugin` repository takes the implementation of the plugin, this repository will contain the source for the official Maven plugin when the Windup 2.x ships.
+This `tsmodelsgen-maven-plugin` scans the Windup Frame models (graph database models)
+and generates their TypeScript counterpart classes to be used in the Windup Web UI (written in Angular2/TypeScript).
+
+The TypeScript classes are then used by the OGM functionality within the Windup Web UI.
+
+The plugin is intended to run as a part of the Windup Web build process
+and the classes are supposed to be copied to `windup-web/ui/target/generated-sources`,
+and eventually bundled as resources into the Windup Web application.
 
 == Prerequisites
 
-To run properly, Windup maven plugin relies on Maven version 3.2.5 and later.
+To run properly, this plugin relies on Maven version 3.3.x or later.
 
-== Procedure to build the plugin 
-    
-* The first time, you must clone the windup-maven-plugin GitHub repository. 
-+
-----
-git clone https://github.com/windup/windup-maven-plugin.git
-----
-    
-* Navigate to the local windup-maven-plugin directory.
-+
-----
-cd windup-maven-plugin
-----
+== Example configuration
 
-* Build the project.
-+
-----
-mvn clean install
-----
-
-== Procedure to use the plugin
-
-An example showing how to use the plugin can be found https://github.com/windup/windup-maven-plugin/blob/master/src/it/simple-it/pom.xml[here].
-
-More examples will be provided as well the list of all atributes that can be used by the plugin.
-
+```xml
+    <build>
+        <plugins>
+            <!-- Run the Windup TS Models Generator plugin -->
+            <plugin>
+                <groupId>org.jboss.windup.web.plugin</groupId>
+                <artifactId>windup-tsmodelsgen-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <outputDir>target/tsModels</outputDir>
+                    <adjacencyMode>MATERIALIZE</adjacencyMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generateTSmodels</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>tsmodelgen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+```
 
 
