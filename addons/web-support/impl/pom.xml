@@ -61,5 +61,6 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+                
     </dependencies>
 </project>
