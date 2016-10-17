@@ -22,7 +22,8 @@ const appRoutes: Routes = [
     {path:"analysis-context-form", component: AnalysisContextFormComponent, data: {displayName: "Edit Analysis Context"}, canDeactivate: [ConfirmDeactivateGuard]},
 
     // Reports
-    {path:"technology-report", component: TechnologiesReport, data: {displayName: "Technology Report"}}
+    // :exec refers to the execution ID so that we can use the right graph db.
+    {path:"technology-report/:exec", component: TechnologiesReport, data: {displayName: "Technology Report"}}
 ];
 
 export const appRoutingProviders: any[] = [

@@ -49,6 +49,8 @@ import {PopoverComponent} from "./components/popover.component";
 import {JsTreeAngularWrapperComponent} from "./components/js-tree-angular-wrapper.component";
 import {PackageRegistryService} from "./services/package-registry.service";
 import {TechnologiesReport} from "./components/reports/technologies/technologies.report";
+import {TechReportService} from "./components/reports/technologies/TechReportService";
+import {FramesRestClientService} from './services/graph/FramesRestClientService';
 
 
 @NgModule({
@@ -110,6 +112,9 @@ import {TechnologiesReport} from "./components/reports/technologies/technologies
         WindupService,
         NotificationService,
         PackageRegistryService,
+        TechReportService,
+        FramesRestClientService,
+
         {
             provide: Http,
             useFactory:
