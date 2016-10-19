@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -28,6 +30,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.web.addons.tsmodelsgen.TypeScriptModelsGeneratorConfig.AdjacencyMode;
 
 /**
  * Creates the TypeScript models which could accomodate the Frames models instances.
@@ -41,23 +44,27 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 public class TypeScriptModelsGenerator
 {
     public static final Logger LOG = Logger.getLogger( TypeScriptModelsGenerator.class.getName() );
-    private static final String MAPPING_DATA_CLASS_NAME = "DiscriminatorMappingData";
+    private static final String DiscriminatorMappingData = "DiscriminatorMappingData";
+    private static final String DiscriminatorMapping = "DiscriminatorMapping";
+    private static final String BaseModel = "FrameModel";
     
     /**
-     * Path to the graph TypeScript package, which will used for the imports in the models.
-     * Needs to point be the relative path from the final TS models dir to the graph package dir.
-     * This needs to be parametrized, probably in Maven build.
+     * Path the webapp/ dir which will be used for the imports in the generated models.
+     * I.e. <code>import {...} from '$importPathToWebapp';</code>
+     * Needs to be the relative path from the final TS models dir to the graph package dir.
      */
-    private static final String PATH_TO_GRAPH_PKG = "../services/graph";
+    private static final String PATH_TO_GRAPH_PKG = "app/services/graph";
     
-    private final Path modelFilesDir;
+    //private final Path modelFilesDir;
+    
+    private TypeScriptModelsGeneratorConfig config;
 
-    public TypeScriptModelsGenerator(Path destDir)
+    public TypeScriptModelsGenerator(TypeScriptModelsGeneratorConfig config)
     {
-        this.modelFilesDir = destDir;
+        this.config = config;
     }
 
-    public static enum AdjacentMode { PROXIED, MATERIALIZED, MIXED; }
+    
 
 
 
@@ -65,14 +72,14 @@ public class TypeScriptModelsGenerator
      * Generates the TypeScript files for models, copying the structure of WindupVertexModel's.
      * The "entry point".
      */
-    public void generate(Set<Class<? extends WindupFrame<?>>> modelTypes, AdjacentMode mode)
+    public void generate(Set<Class<? extends WindupFrame<?>>> modelTypes)
     {
         try {
-            Files.createDirectories(this.modelFilesDir);
-            LOG.info("Creating TypeScript models in " + this.modelFilesDir.toAbsolutePath());
+            Files.createDirectories(this.config.getOutputPath());
+            LOG.info("Creating TypeScript models in " + this.config.getOutputPath().toAbsolutePath());
         }
         catch (IOException ex) {
-            LOG.severe("Could not create directory for TS models: " + ex.getMessage() + "\n\t" + this.modelFilesDir);
+            LOG.severe("Could not create directory for TS models: " + ex.getMessage() + "\n\t" + this.config.getOutputPath());
         }
 
         Map<String, ModelDescriptor> classesMapping = new TreeMap<>(); // We want deterministic order.
@@ -91,7 +98,7 @@ public class TypeScriptModelsGenerator
         
         for (ModelDescriptor modelDescriptor : classesMapping.values())
         {
-            writeTypeScriptModelClass(modelDescriptor, mode);
+            writeTypeScriptModelClass(modelDescriptor, this.config.getAdjacencyMode());
         }
         
         writeTypeScriptClassesMapping(classesMapping);
@@ -314,11 +321,13 @@ public class TypeScriptModelsGenerator
      */
     private void writeTypeScriptClassesMapping(Map<String, ModelDescriptor> discriminatorToClassMapping)
     {
-        final File mappingFile = this.modelFilesDir.resolve(MAPPING_DATA_CLASS_NAME + ".ts").toFile();
+        final File mappingFile = this.config.getOutputPath().resolve(DiscriminatorMappingData + TS_SUFFIX).toFile();
         try (FileWriter mappingWriter = new FileWriter(mappingFile))
         {
-            mappingWriter.write("import {FrameModel} from '" + PATH_TO_GRAPH_PKG + "/FrameModel';\n");
-            mappingWriter.write("import {DiscriminatorMapping} from '" + PATH_TO_GRAPH_PKG + "/DiscriminatorMapping';\n\n");
+            final Path path = this.config.getImportPathToWebapp().resolve(PATH_TO_GRAPH_PKG).resolve(BaseModel);
+            mappingWriter.write("import {" + BaseModel + "} from '" + path + "';\n");
+            final Path path2 = this.config.getImportPathToWebapp().resolve(PATH_TO_GRAPH_PKG).resolve(DiscriminatorMapping);
+            mappingWriter.write("import {" + DiscriminatorMapping + "} from '" + path2 + "';\n\n");
             
             for (Map.Entry<String, ModelDescriptor> entry : discriminatorToClassMapping.entrySet())
             {
@@ -326,12 +335,12 @@ public class TypeScriptModelsGenerator
             }
 
             mappingWriter.write("\n" +
-                "export class " + MAPPING_DATA_CLASS_NAME + " extends DiscriminatorMapping\n{\n" +
+                "export class " + DiscriminatorMappingData + " extends " + DiscriminatorMapping + "\n{\n" +
                 "    //@Override\n" +
-                "    public static getMapping(): { [key: string]: typeof FrameModel } {\n" +
+                "    public static getMapping(): { [key: string]: typeof " + BaseModel + " } {\n" +
                 "        return this.mapping;\n" +
                 "    }\n\n" +
-                "    static mapping: { [key: string]: typeof FrameModel } = {\n");
+                "    static mapping: { [key: string]: typeof " + BaseModel + " } = {\n");
             for (Map.Entry<String, ModelDescriptor> entry : discriminatorToClassMapping.entrySet())
             {
                 mappingWriter.write("        \"" + entry.getKey() + "\": " + entry.getValue().modelClassName + ",\n");
@@ -352,11 +361,12 @@ public class TypeScriptModelsGenerator
      */
     private void writeTypeScriptBarrel(Map<String, ModelDescriptor> discriminatorToClassMapping)
     {
-        final File mappingFile = this.modelFilesDir.resolve("index.ts").toFile();
+        final File mappingFile = this.config.getOutputPath().resolve("index.ts").toFile();
         try (FileWriter mappingWriter = new FileWriter(mappingFile))
         {
-            mappingWriter.write("import {FrameModel} from '" + PATH_TO_GRAPH_PKG + "/FrameModel';\n");
-            mappingWriter.write("import {DiscriminatorMappingData} from '" + "./DiscriminatorMappingData';\n\n");
+            final Path path = this.config.getImportPathToWebapp().resolve(PATH_TO_GRAPH_PKG).resolve(BaseModel);
+            mappingWriter.write("import {" + BaseModel + "} from '" + path + "';\n");
+            mappingWriter.write("import {" + DiscriminatorMappingData + "} from './" + DiscriminatorMappingData + "';\n\n");
             
             for (Map.Entry<String, ModelDescriptor> entry : discriminatorToClassMapping.entrySet())
             {
@@ -377,15 +387,16 @@ public class TypeScriptModelsGenerator
      *              This can be a passive way (properties and arrays), active way - proxies, or mixed, or both.
      *              Currently implemented is passive.
      */
-    private void writeTypeScriptModelClass(ModelDescriptor modelDescriptor, AdjacentMode mode)
+    private void writeTypeScriptModelClass(ModelDescriptor modelDescriptor, AdjacencyMode mode)
     {
-        final File tsFile = this.modelFilesDir.resolve(modelDescriptor.modelClassName + ".ts").toFile();
+        final File tsFile = this.config.getOutputPath().resolve(modelDescriptor.modelClassName + TS_SUFFIX).toFile();
         try (FileWriter tsWriter = new FileWriter(tsFile))
         {
-            tsWriter.write("import {FrameModel} from '" + PATH_TO_GRAPH_PKG + "/FrameModel';\n\n");
+            final Path path = this.config.getImportPathToWebapp().resolve(PATH_TO_GRAPH_PKG).resolve(BaseModel);
+            tsWriter.write("import {" + BaseModel + "} from '" + path + "';\n\n");
             
             Set<String> imported = new HashSet<>();
-            imported.add("FrameModel");
+            imported.add(BaseModel);
             
             // Import property and relation types.
             for (ModelRelation relation : modelDescriptor.relations.values())
@@ -400,7 +411,7 @@ public class TypeScriptModelsGenerator
 
             List<String> extendedModels = modelDescriptor.extendedModels;
             if (extendedModels == null || extendedModels.size() == 0)
-                extendedModels = Collections.singletonList(AdjacentMode.PROXIED.equals(mode) ? "FrameProxy" : "FrameModel");
+                extendedModels = Collections.singletonList(AdjacencyMode.PROXIED.equals(mode) ? "FrameProxy" : BaseModel);
 
             // Import extended types.
             tsWriter.write(
@@ -468,10 +479,32 @@ public class TypeScriptModelsGenerator
         }
     }
     
-    private String escapeJSandQuote(String str)
+    String escapeJSandQuote(String str)
     {
         return String.format("'%s'", StringEscapeUtils.escapeEcmaScript(str));
     }
+    
+    private String formatClassFileName(ModelDescriptor modelDescriptor)
+    {
+        String separ = ".";
+        switch (this.config.getFileNamingStyle())
+        {
+            case LOWERCASE_DASHES:
+                separ = "-";
+            case LOWERCASE_DOTS:
+            {
+                //return modelDescriptor.modelClassName.replaceAll(separ, separ) + ".ts";
+                Matcher mat = pat.matcher(modelDescriptor.modelClassName);
+                return StringUtils.removeStart(mat.replaceAll(separ + "$1"), separ) + TS_SUFFIX;
+            }
+            default:
+            case CAMELCASE:
+                return modelDescriptor.modelClassName + TS_SUFFIX;
+        }
+    }
+    private static final String TS_SUFFIX = ".ts";
+    
+    private static final Pattern pat = Pattern.compile("\\p{javaUpperCase}");
 }
 
 /**
@@ -663,7 +696,7 @@ class ModelRelation extends ModelMember
 
 
 
-    String toTypeScript(TypeScriptModelsGenerator.AdjacentMode mode)
+    String toTypeScript(AdjacencyMode mode)
     {
         switch(mode){
             case PROXIED: return toTypeScriptProxy();

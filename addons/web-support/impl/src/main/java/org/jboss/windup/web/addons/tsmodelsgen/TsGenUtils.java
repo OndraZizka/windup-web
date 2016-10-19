@@ -104,7 +104,7 @@ public class TsGenUtils
     }
 
 
-    static String removePrefixAndSetMethodPresence(String name, String prefix, EnumSet<ModelRelation.BeanMethodType> methodsPresent, ModelRelation.BeanMethodType flagToSetIfPrefixFound)
+    static String removePrefixAndSetMethodPresence(String name, String prefix, EnumSet<ModelMember.BeanMethodType> methodsPresent, ModelRelation.BeanMethodType flagToSetIfPrefixFound)
     {
         String name2 = StringUtils.removeStart(name, prefix);
         if (!name2.equals(name))
