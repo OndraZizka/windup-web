@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -46,7 +47,7 @@ public class TypeScriptModelsGenerator
     public static final Logger LOG = Logger.getLogger( TypeScriptModelsGenerator.class.getName() );
     private static final String DiscriminatorMappingData = "DiscriminatorMappingData";
     private static final String DiscriminatorMapping = "DiscriminatorMapping";
-    private static final String BaseModel = "FrameModel";
+    private static final String BaseModel = "BaseFrameModel";
     
     /**
      * Path the webapp/ dir which will be used for the imports in the generated models.
@@ -74,6 +75,8 @@ public class TypeScriptModelsGenerator
      */
     public void generate(Set<Class<? extends WindupFrame<?>>> modelTypes)
     {
+        validateConfig();
+                
         try {
             Files.createDirectories(this.config.getOutputPath());
             LOG.info("Creating TypeScript models in " + this.config.getOutputPath().toAbsolutePath());
@@ -102,6 +105,16 @@ public class TypeScriptModelsGenerator
         }
         
         writeTypeScriptClassesMapping(classesMapping);
+    }
+
+    
+    private void validateConfig()
+    {
+        if (this.config.getImportPathToWebapp() == null)
+        {
+            LOG.warning("Import path to webapp is null! Setting to ''.");
+            this.config.setImportPathToWebapp(Paths.get(""));
+        }
     }
     
     private void addClassesThatAreSkippedForSomeReason(Map<String, ModelDescriptor> classesMapping)
@@ -324,14 +337,24 @@ public class TypeScriptModelsGenerator
         final File mappingFile = this.config.getOutputPath().resolve(DiscriminatorMappingData + TS_SUFFIX).toFile();
         try (FileWriter mappingWriter = new FileWriter(mappingFile))
         {
+            Set<String> imported = new HashSet<>();
+
             final Path path = this.config.getImportPathToWebapp().resolve(PATH_TO_GRAPH_PKG).resolve(BaseModel);
             mappingWriter.write("import {" + BaseModel + "} from '" + path + "';\n");
+            imported.add(BaseModel);
+            
             final Path path2 = this.config.getImportPathToWebapp().resolve(PATH_TO_GRAPH_PKG).resolve(DiscriminatorMapping);
             mappingWriter.write("import {" + DiscriminatorMapping + "} from '" + path2 + "';\n\n");
+            imported.add(DiscriminatorMapping);
+
             
             for (Map.Entry<String, ModelDescriptor> entry : discriminatorToClassMapping.entrySet())
             {
-                mappingWriter.write(String.format("import {%1$s} from './%1$s';\n", entry.getValue().modelClassName));
+                String importedClass = entry.getValue().modelClassName;
+                if (imported.add(importedClass))
+                    mappingWriter.write(String.format("import {%1$s} from './%1$s';\n", importedClass));
+                else
+                    mappingWriter.write(String.format("// {%1$s} wanted to be here again\n", importedClass));
             }
 
             mappingWriter.write("\n" +
@@ -340,9 +363,12 @@ public class TypeScriptModelsGenerator
                 "    public static getMapping(): { [key: string]: typeof " + BaseModel + " } {\n" +
                 "        return this.mapping;\n" +
                 "    }\n\n" +
+                    
                 "    static mapping: { [key: string]: typeof " + BaseModel + " } = {\n");
+            
             for (Map.Entry<String, ModelDescriptor> entry : discriminatorToClassMapping.entrySet())
             {
+                
                 mappingWriter.write("        \"" + entry.getKey() + "\": " + entry.getValue().modelClassName + ",\n");
             }
             mappingWriter.write("    };\n\n");

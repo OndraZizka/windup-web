@@ -80,7 +80,13 @@ public class WindupTsModelGenMojo extends AbstractMojo
     private String adjacencyMode;
 
     /**
-     * How adjacency is handled - plain arrays ('MATERIALIZED') or proxied methods ('PROXIED').
+     * How the file names look like:
+     * <pre>
+     * CAMELCASE        FooModel.ts
+     * LOWERCASE_DASHES foo-model.ts
+     * LOWERCASE_DOTS   foo.model.ts
+     * </pre>
+     * Currently only CAMELCASE is supported.
      */
     @Parameter( alias = "fileNamingStyle", property = "fileNamingStyle", required = false, defaultValue = "CAMELCASE")
     private String fileNamingStyle;

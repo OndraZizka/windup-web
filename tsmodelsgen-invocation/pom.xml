@@ -67,9 +67,12 @@
                         <artifactId>windup-tsmodelsgen-maven-plugin</artifactId>
                         <version>${project.version}</version>
                         <configuration>
-                            <outputDir>target/tsModels</outputDir>
+                            <outputDir>${project.build.directory}/tsModels</outputDir>
                             <adjacencyMode>MATERIALIZED</adjacencyMode>
-                            <importPathToWebapp>./</importPathToWebapp>
+                            <!-- "../../" if it goes to app/tsModels/ -->
+                            <!-- "" if it goes to target/tsModels and compiled 
+                                 using tsconfig-tsModels.json: `tsc -p target/tsModels/` -->
+                            <importPathToWebapp>../../</importPathToWebapp>
                             <overwrite>true</overwrite>
                             <fileNamingStyle>CAMELCASE</fileNamingStyle>
                         </configuration>
@@ -86,7 +89,7 @@
                         <artifactId>maven-jar-plugin</artifactId>
                         <version>3.0.2</version>
                         <configuration>
-                            <classesDirectory>target</classesDirectory>
+                            <classesDirectory>${project.build.directory}</classesDirectory>
                             <archive>
                                 <addMavenDescriptor>false</addMavenDescriptor>
                             </archive>
@@ -100,7 +103,7 @@
                                 <phase>package</phase>
                                 <goals> <goal>jar</goal> </goals>
                                 <configuration>
-                                    <classesDirectory>target</classesDirectory>
+                                    <classesDirectory>${project.build.directory}</classesDirectory>
                                     <classifier>models</classifier>
                                     <archive>
                                         <addMavenDescriptor>false</addMavenDescriptor>

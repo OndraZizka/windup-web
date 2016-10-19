@@ -2,7 +2,7 @@ import {Http} from "@angular/http";
 /**
  * Things common to all models on the Typescript side.
  */
-export class BaseModel
+export class BaseFrameModel
 {
     // Model metadata
 	static discriminator: string;
@@ -12,6 +12,6 @@ export class BaseModel
     }
 
     public toString():string {
-        return `FrameModel<${this.discriminator}>#${this.vertexId}`;
+        return `BaseFrameModel<${this.discriminator}>#${this.vertexId}`;
     }
 }

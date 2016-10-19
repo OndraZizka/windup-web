@@ -9,19 +9,11 @@
     "removeComments": false,
     "noImplicitAny": false,
     "rootDir": ".",
-    //"rootDirs": [".", "../../../target/tsModels"],
-    //"rootDirs": ["../../../target/tsModels"],
-    //"rootDir": "../../../target/tsModels", 
     "outDir": "../../../target/windup-web",
     "sourceRoot": "/windup-web/"
   },
   "exclude": [
     "node_modules",
-    //"target/**",
-    //"../../../target/**", 
-    //"../../../target/**/*",
-    //"../../../target/tsModels/*", 
-    //"target/tsModels/**",
     "typings/main",
     "typings/main.d.ts"
   ]
