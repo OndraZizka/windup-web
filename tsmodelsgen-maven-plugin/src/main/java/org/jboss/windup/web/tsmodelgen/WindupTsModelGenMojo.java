@@ -49,7 +49,7 @@ import org.jboss.windup.web.addons.tsmodelsgen.TypeScriptModelsGeneratorConfig.F
  * 
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-@Mojo(name = "tsmodelgen", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator = true)
+@Mojo(name = "tsmodelgen", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator = false)
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)
 public class WindupTsModelGenMojo extends AbstractMojo
 {
