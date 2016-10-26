@@ -112,4 +112,18 @@ public class TsGenUtils
         return name2;
     }
 
+    static void quoteIfNotNull(StringBuilder sb, String val)
+    {
+        if (val == null)
+            sb.append("null");
+        else
+            sb.append("'").append(val).append("'");
+    }
+
+
+    static String quoteIfNotNull(String val)
+    {
+        return (val == null) ? "null" : new StringBuilder().append("'").append(val).append("'").toString();
+    }
+
 }

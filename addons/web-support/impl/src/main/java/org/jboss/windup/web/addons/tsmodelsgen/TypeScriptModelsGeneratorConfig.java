@@ -7,7 +7,7 @@ import java.nio.file.Path;
  */
 public class TypeScriptModelsGeneratorConfig
 {
-    public static enum AdjacencyMode { PROXIED, MATERIALIZED, MIXED; }
+    public static enum AdjacencyMode { PROXIED, MATERIALIZED, MIXED, DECORATED; }
     public static enum FileNamingStyle { CAMELCASE, LOWERCASE_DASHES, LOWERCASE_DOTS; }
     
     

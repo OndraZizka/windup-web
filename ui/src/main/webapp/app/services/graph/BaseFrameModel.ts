@@ -5,13 +5,13 @@ import {Http} from "@angular/http";
 export class BaseFrameModel
 {
     // Model metadata
-	static discriminator: string;
+    static discriminator: string;
     http:Http;
 
     constructor(private discriminator:string[], public vertexId: number, public data:any){
     }
 
     public toString():string {
-        return `BaseFrameModel<${this.discriminator}>#${this.vertexId}`;
+        return `BaseModel<${this.discriminator}>#${this.vertexId}`;
     }
 }
