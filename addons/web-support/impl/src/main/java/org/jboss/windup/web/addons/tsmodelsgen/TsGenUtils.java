@@ -1,24 +1,22 @@
 package org.jboss.windup.web.addons.tsmodelsgen;
 
-
-import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.EnumSet;
 import java.util.logging.Logger;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * Contains useful methods for use by the TS generator.
  *
  *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class TsGenUtils
 {
-    private static final Logger log = Logger.getLogger( TsGenUtils.class.getName() );
-
+    private static Logger LOG = Logger.getLogger(TsGenUtils.class.getName());
 
     /**
      * Returns the in or out type of given method, assumably implementing a bean property.
@@ -37,16 +35,16 @@ public class TsGenUtils
             setter = true;
             if (method.getParameterCount() != 1)
             {
-                TypeScriptModelsGenerator.LOG.severe("Expected setter/adder/remover to have 1 parameter: " + method.toString());
+                LOG.severe("Expected setter/adder/remover to have 1 parameter: " + method.toString());
             }
             if (method.getParameterCount() == 0)
-                TypeScriptModelsGenerator.LOG.severe("Setter/adder/remover has no parameters: " + method.toString());
+                LOG.severe("Setter/adder/remover has no parameters: " + method.toString());
             else
             {
                 final Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes.length == 0)
                 {
-                    TypeScriptModelsGenerator.LOG.severe("Setter/adder/remover has no parameters: " + method.toString());
+                    LOG.severe("Setter/adder/remover has no parameters: " + method.toString());
                     return null;
                 }
                 type = parameterTypes[0];
@@ -54,7 +52,7 @@ public class TsGenUtils
         }
         if (type == null)
         {
-            TypeScriptModelsGenerator.LOG.severe("Unknown kind of method (not get/set/add/remove): " + method.toString());
+            LOG.severe("Unknown kind of method (not get/set/add/remove): " + method.toString());
             return null;
         }
         if (Iterable.class.isAssignableFrom(type))
@@ -96,8 +94,6 @@ public class TsGenUtils
         if (t instanceof TypeVariable)
         {
             TypeVariable tv = (TypeVariable) actualArgs[0];
-            AnnotatedType[] annotatedBounds = tv.getAnnotatedBounds(); ///
-            GenericDeclaration genericDeclaration = tv.getGenericDeclaration(); ///
             return (Class) tv.getAnnotatedBounds()[0].getType();
         }
         throw new IllegalArgumentException("Unknown kind of type: " + t.getTypeName());
@@ -123,7 +119,7 @@ public class TsGenUtils
 
     static String quoteIfNotNull(String val)
     {
-        return (val == null) ? "null" : new StringBuilder().append("'").append(val).append("'").toString();
+        return (val == null) ? "null" : new StringBuilder("'").append(val).append("'").toString();
     }
 
 }
