@@ -12,7 +12,7 @@ export class DiscriminatorMappingTestData extends DiscriminatorMapping
         "TestGenerator": TestGeneratorModel,
         "TestPlanet": TestPlanetModel,
     }
-    
+
     public static getMapping() : { [key: string]: typeof BaseFrameModel } { return this.mapping; }
 
     constructor() { super(); }

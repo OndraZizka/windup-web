@@ -3,14 +3,14 @@ import {BaseFrameModel as BaseModel} from './BaseFrameModel';
 /**
  * Mapping between discriminator and model classes.
  * This probably needs inheritance due to how TS works (at the time I am playing with it).
- * 
+ *
  * This could theoretically support multiple base models, like, DiscriminatorMapping<T extends BaseModel>,
  * but TypeScript can't deal with class generics well.
  */
 export abstract class DiscriminatorMapping
 {
     public static getMapping() : { [key: string]: typeof BaseModel } { return {}; }
-    
+
     public static getModelClassByDiscriminator(discriminator: string): typeof BaseModel
     {
         //return this.mapping[discriminator];
@@ -34,7 +34,7 @@ export abstract class DiscriminatorMapping
 
     /**
      * This is intended to scan all TS classes that extend BaseFrameModel.
-     * However there's no supported way to do it 
+     * However there's no supported way to do it
      * and the one used here may stop working in future TS versions.
      * Therefore for now, let's rely on the generated DiscriminatorMappingData.ts.
      */
@@ -46,10 +46,10 @@ export abstract class DiscriminatorMapping
         var props = Object.getOwnPropertyNames(window);
         for (let i = 0; i < props.length; i++) {
             let key = props[i];
-                
+
             if (key.startsWith("webkit"))
                 continue;
-                
+
             let val = window[key];
             if (val == null)
                 continue;
@@ -78,11 +78,11 @@ export abstract class DiscriminatorMapping
             let discr = modelClass.discriminator;
             mapping_[discr] == modelClass;
         }
-        
+
         ///this.mapping = mapping_;
         return mapping_;
     }
-    
+
     public toString() : string {
         let mapping_ = Object.getPrototypeOf(this).constructor.getMapping();
         return `${Object.getPrototypeOf(this).constructor}{${Object.getOwnPropertyNames(mapping_).length}}`;

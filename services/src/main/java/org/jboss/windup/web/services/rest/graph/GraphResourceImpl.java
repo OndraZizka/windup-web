@@ -60,7 +60,7 @@ public class GraphResourceImpl extends AbstractGraphResource implements GraphRes
         }
         return vertices;
     }
-    
+
     @Override
     public List<Map<String, Object>> getByType(String vertexType, Integer depth){
         return getByType(getAnyExecution().getId(), vertexType, depth);
@@ -80,8 +80,8 @@ public class GraphResourceImpl extends AbstractGraphResource implements GraphRes
             throw new IllegalArgumentException("Non-existent vertex ID " + id + " in execution " + executionID);
         return convertToMap(executionID, vertex, depth);
     }
-    
-    
+
+
     @Override
     public String getTestVertex(){
         return "[{\"w:winduptype\":[\"FileResource\",\"ArchiveModel:\",\"WarArchiveModel\"],\"fileName\":\"jee-example-web.war\","

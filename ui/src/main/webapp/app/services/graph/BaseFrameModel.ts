@@ -8,7 +8,7 @@ export class BaseFrameModel
     static graphPropertyMapping: { [key:string]:string; };
     static graphRelationMapping: { [key:string]:string; };
 
-    
+
     constructor(
         public vertexId: number,
         private discriminator: string[],

@@ -31,7 +31,7 @@ import org.jboss.windup.util.Logging;
 public class AbstractGraphResource
 {
     private static final Logger LOG = Logging.get(AbstractGraphResource.class);
-    
+
     public static final String KEY_ID = "_id";
     public static final String TYPE = "_type";
     public static final String TYPE_VERTEX = "vertex";
@@ -150,7 +150,7 @@ public class AbstractGraphResource
             throw new IllegalArgumentException("Windup execution not found, ID: " + executionID);
         return getGraphForExecution(execution);
     }
-    
+
     /**
      * Dev/test purposes.
      */
@@ -160,7 +160,7 @@ public class AbstractGraphResource
             throw new IllegalStateException("No executions found.");
         return executions.get(0);
     }
-    
+
 
     protected GraphContext getGraphForExecution(WindupExecution execution) throws IllegalStateException {
         try
@@ -170,17 +170,17 @@ public class AbstractGraphResource
 
             ///GraphContextFactory graphContextFactory = servicesProducer.getGraphContextFactory();
             ///return graphContextFactory.load(graphPath);
-            return graphCache.getGraph(graphPath);            
+            return graphCache.getGraph(graphPath);
         }
         catch (Exception ex)
         {
             throw new IllegalStateException("Can't load graph for execution " + execution.getId() + ":\n\t" + ex.getMessage(), ex);
         }
     }
-    
+
     protected List<WindupExecution> getExecutions()
     {
         TypedQuery<WindupExecution> queryExecutions = entityManager.createQuery("FROM WindupExecution AS ex", WindupExecution.class);
         return queryExecutions.getResultList();
-    }    
+    }
 }

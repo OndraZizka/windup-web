@@ -10,15 +10,15 @@ import org.jboss.windup.web.services.rest.graph.AbstractGraphResource;
 
 /**
  * Contains methods for managing technologies statistics.
- * 
+ *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @Stateless
 public class TechnologiesStatsEndpointImpl extends AbstractGraphResource implements TechnologiesStatsEndpoint
 {
     private static Logger LOG = Logger.getLogger(TechnologiesStatsEndpointImpl.class.getSimpleName());
-    
-    
+
+
     @Override
     public boolean computeTechStats(long executionId) {
         final GraphContext graphContext = this.getGraphContext(executionId);

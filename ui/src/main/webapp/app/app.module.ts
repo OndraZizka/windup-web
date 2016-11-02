@@ -86,7 +86,7 @@ import {FramesRestClientService} from './services/graph/FramesRestClientService'
         ProgressBarComponent,
         RulesModalComponent,
         TechnologyComponent,
-        
+
         FileSelectDirective,
         FileDropDirective,
         UploadQueueComponent,

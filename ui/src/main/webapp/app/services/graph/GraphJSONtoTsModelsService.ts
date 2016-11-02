@@ -31,9 +31,9 @@ export class GraphJSONtoTsModelsService<T extends BaseFrameModel>
     static MODE = "_mode";
     static DISCRIMINATOR = "w:winduptype";
 
-    // Maps the @TypeValue strings to TS model classes.    
+    // Maps the @TypeValue strings to TS model classes.
     private discriminatorMappingData : typeof DiscriminatorMapping;
-    
+
     constructor (discriminatorMappingData : typeof DiscriminatorMapping){
         this.discriminatorMappingData = discriminatorMappingData;
     }
@@ -43,7 +43,7 @@ export class GraphJSONtoTsModelsService<T extends BaseFrameModel>
         return this.discriminatorMappingData.getModelClassByDiscriminator(discriminator);
     }
 
-    
+
     /**
      * Unmarshalls the JSON graph data representation into TypeScript objects.
      * Accepts a single JSON object or a JSON array, returns an object or an array, respectively.
@@ -52,7 +52,7 @@ export class GraphJSONtoTsModelsService<T extends BaseFrameModel>
     {
         //console.log("Called fromJSON() with " + input); ///
         const service_this = this;
-        
+
         if (Array.isArray(input)) {
             let items : T[] = [];
             for (var i = 0; i < input.length; i++) {
@@ -61,10 +61,10 @@ export class GraphJSONtoTsModelsService<T extends BaseFrameModel>
             }
             return items;
         }
-        
+
         if (clazz === void 0){
             var disc = input[GraphJSONtoTsModelsService.DISCRIMINATOR];
-            
+
             if (disc instanceof Array)
                 disc = disc[0];
             if (disc === void 0)
@@ -81,7 +81,7 @@ export class GraphJSONtoTsModelsService<T extends BaseFrameModel>
         //let result = new clazz(input[GraphJSONtoTsModelsService.DISCRIMINATOR], input["_id"], input);
         let result = new BaseFrameModel(input[GraphJSONtoTsModelsService.DISCRIMINATOR], input["_id"], input);
         Object.getPrototypeOf(result).constructor = clazz;
-        
+
         //result.setVertexId(input["_id"]);
         //console.log("We have a frame now: " + result); ///
 
@@ -174,7 +174,7 @@ type AnyClass = { new (): any };
 /**
  * Sorts given classes  by the number of extends from Object.
  * Usage:
- * 
+ *
        class A { }
        class B extends A { }
        class C extends B { }
@@ -201,11 +201,11 @@ export function sortClassesBySpeciality(classes: Array<AnyClass>) : Array<AnyCla
             }
             proto = parent;
         }
-            
+
         if (classesLevels[depth] === void 0)
             classesLevels[depth] = [];
         else
-        {   
+        {
             console.warn("Classes at the same level of inheritance, means they are from different inheritance branches: "
                 //+ `proto: ${proto}\n`
                 //+ `proto.constructor: ${proto.constructor}\n`

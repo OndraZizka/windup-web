@@ -14,24 +14,24 @@ function getData0() { return TEST_JSON_DATA_0; }
 function getData1() { return TEST_JSON_DATA_1; }
 
 function tryUnmarshaller()
-{  
+{
     var clazz = DiscriminatorMappingData.getModelClassByDiscriminator("WarArchiveModel");
     console.log("class for WarArchiveModel: " + (<Function>clazz).name);
     let service = new GraphJSONtoTsModelsService(DiscriminatorMappingData);
-    
+
     //let frame : WarArchiveModel = service.fromJSON(TestGraphData.TEST_GRAPH_MODEL_DATA);
     var frame: WarArchiveModel = (<WarArchiveModel> service.fromJSON(getData0()[0]));
     console.log("Got frame: " + frame + " fileName: " + frame.fileName);
-    
+
     frame = (<WarArchiveModel> service.fromJSON(getData1()[0]));
     console.log("Got frame: " + frame + " fileName: " + frame.fileName);
     for (let i in frame)
         console.log(`${i}: ${frame[i]}`);
 };
-    
-    
+
+
 function tryUnmarshaller2()
-{  
+{
     $(document).ready(function(){ new UnmarshallerTry2().getStatsFromGraph(); });
 };
 

@@ -25,6 +25,12 @@ export class DiscriminatorMapping
 
         return null;
     }
+
+
+    public toString() : string {
+        let mapping_ = Object.getPrototypeOf(this).constructor.mapping;
+        return `${Object.getPrototypeOf(this).constructor}{${Object.getOwnPropertyNames(mapping_).length}}`;
+    }
 }
 
 export function getParentClass(clazz){

@@ -14,7 +14,7 @@ import {ValidationResult} from "../model/validation-result.model";
         </div>
         <div body>
             <form class="form-horizontal">
-                
+
                 <table class="datatable table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -59,7 +59,7 @@ import {ValidationResult} from "../model/validation-result.model";
                     </tbody>
                 </table>
                 <button *ngIf="!newOption" (click)="startAddNew()">Add New Option</button>
-                
+
             </form>
         </div>
         <div footer>

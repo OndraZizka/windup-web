@@ -80,7 +80,7 @@ public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet
 
             hashModel.put(KEYCLOAK, keycloakProperties);
         }
-        
+
         deriveResponseContentType(request, response);
         return templateModel;
     }
@@ -99,7 +99,7 @@ public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet
         return superPath;
     }
 
-    
+
     private void deriveResponseContentType(HttpServletRequest request, HttpServletResponse response)
     {
         Map<String, String> suffixToMimeType = new HashMap();
@@ -108,7 +108,7 @@ public class FreemarkerServlet extends freemarker.ext.servlet.FreemarkerServlet
         suffixToMimeType.put("json", "application/json");
         suffixToMimeType.put("js", "application/javascript");
         suffixToMimeType.put("ts", "application/x-typescript");
-        
+
         String suffix = StringUtils.removeEnd(request.getPathInfo(), ".ftl");
         suffix = StringUtils.substringAfterLast(suffix, ".");
         String mimeType = suffixToMimeType.get(suffix);

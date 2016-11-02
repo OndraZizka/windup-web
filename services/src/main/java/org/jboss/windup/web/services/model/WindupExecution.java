@@ -310,7 +310,7 @@ public class WindupExecution implements Serializable
                 ", timeStarted=" + formatCalendar(timeStarted) +
                 '}';
     }
-    
+
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String formatCalendar(Calendar cal)
     {

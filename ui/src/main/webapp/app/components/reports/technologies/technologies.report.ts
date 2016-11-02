@@ -17,7 +17,7 @@ import {Observable} from 'rxjs/Observable';
     templateUrl: 'app/components/reports/technologies/technologies.report.html'
 })
 export class TechnologiesReport implements OnInit {
-    
+
     private execID: number;
     private technologiesStats: TechnologiesStatsModel = <TechnologiesStatsModel> {};
     private appGroups : ApplicationGroup[];
@@ -28,25 +28,25 @@ export class TechnologiesReport implements OnInit {
         private appGrpService: ApplicationGroupService,
         private frameService: FramesRestClientService
     ){}
-    
+
     ngOnInit(): void {
         this.route.params.forEach((params: Params) => {
             this.execID = +params['exec'];
         });
-                
+
         this.appGrpService.getAll().toPromise().then(appGroups => this.appGroups = appGroups);
-        
+
         this.fetchTechnologiesStats();
     }
-    
+
     fetchTechnologiesStats(): void {
         this.techReportService.getStats(this.execID).subscribe(stats => {
             console.log("Stats: ", stats);
             this.technologiesStats = stats; // [0]
         });
     }
-    
-    
+
+
     static convertStatsToMap(stats: StatsItem[]) : Map<string, StatsItem> {
         let map = new Map<string, StatsItem>();
         stats.forEach(item => map.set(item.key, item));

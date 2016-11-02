@@ -23,7 +23,7 @@ export class UnmarshallerTry2
     static WINDUP_REST_URL =     "http://localhost:8080/windup-web-services/rest";
     static TECHSTATS_CREATE_URL = `${UnmarshallerTry2.WINDUP_REST_URL}/technologyStats/create?exec=`;
     static GRAPH_TECHSTATS_URL  = `${UnmarshallerTry2.WINDUP_REST_URL}/graph/by-type/${UnmarshallerTry2.DISCR_TECH_STATS}?depth=1`;
-    
+
     constructor() {
         //this.graphClient = new FramesRestClientService();
     }
@@ -44,13 +44,13 @@ export class UnmarshallerTry2
 
     public askForAndFetchTechStats2() : Promise<TechnologiesStatsModel> {
         let service = new GraphJSONtoTsModelsService(DiscriminatorMappingData);
-        
+
         // See RegisteredApplicationService and KeycloakService to get the token.
-        
+
         return Observable.ajax.getJSON(UnmarshallerTry2.GRAPH_TECHSTATS_URL).toPromise()
         //subscribe( (next: TechnologiesStatsModel) => { } );
     }
-    
+
     /**
      * Doesn't work. uses some weird incompatible jQuery's Promise.
      */
@@ -61,9 +61,9 @@ export class UnmarshallerTry2
             url: UnmarshallerTry2.GRAPH_TECHSTATS_URL
         }).then(resolve => function(data) {
             if (Array.isArray(data) && data.length != 0 ) {
-                return 
+                return
             }
-            else 
+            else
             {
                 let execId = 1;
                 return $.ajax({
@@ -79,10 +79,10 @@ export class UnmarshallerTry2
                     });
                 });
             }
-            
+
         });
     }
-    
+
     /**
      * This shows how to make a promise from jQuery's incompatible promise object.
      */
@@ -91,14 +91,14 @@ export class UnmarshallerTry2
             url: `http://localhost:8080/windup-web-services/rest/graph/by-type/${UnmarshallerTry2.DISCR_TECH_STATS}?depth=0`
         }).then(data => resolve(data) ) );
     }
-    
-    
+
+
     /**
      * jQuery's AJAX example.
      */
     public fetchSomeData() { //  : Promise<TechnologyReferenceModel>
         let service = new GraphJSONtoTsModelsService(DiscriminatorMappingData);
-        
+
         $.ajax({
             url: "http://localhost:8080/windup-web-services/rest/graph/by-type/JavaClassFileModel?depth=0"
         }).then(function(data) {

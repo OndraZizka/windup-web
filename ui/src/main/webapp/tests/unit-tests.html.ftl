@@ -42,7 +42,7 @@
             console.log('Spec files loaded; starting Jasmine testrunner');
             window.onload();
         }
-            
+
         function getQueryParams(qs) {
             if (qs === void 0)
                 qs = document.location.search;
@@ -52,11 +52,11 @@
                 params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
             return params;
         }
-            
+
         function escapeRegExp(str) {
             return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
         }
-            
+
         var params = getQueryParams();
         // .../unit-tests.html?specs=
         var runSpecs = (!params["specs"]) ? null : runSpecs = params["specs"].split(",");

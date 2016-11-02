@@ -32,14 +32,14 @@ export class TechReportService extends AbstractService
         private http: Http,
         ///private graphClient: FramesRestClientService
     ) { super(); }
-    
+
     static WINDUP_REST_URL =     "http://localhost:8080/windup-web-services/rest";
     static DISCR_TECH_STATS =    TechnologiesStatsModel.discriminator; //"TechnologiesStats";
     static INVOKER_URL =         `${TechReportService.WINDUP_REST_URL}/technologyStats/create?exec=`;
     static GRAPH_TECHSTATS_URL = `${TechReportService.WINDUP_REST_URL}/graph/by-type/${TechReportService.DISCR_TECH_STATS}?depth=1`;
-    
-    
-    getStats(execID: number): Observable<TechnologiesStatsModel> 
+
+
+    getStats(execID: number): Observable<TechnologiesStatsModel>
     {
         ///let service = new GraphJSONtoTsModelsService(DiscriminatorMappingData);
         let service = new GraphJSONToModelService();
