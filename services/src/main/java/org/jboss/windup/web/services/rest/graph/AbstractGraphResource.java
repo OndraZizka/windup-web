@@ -11,6 +11,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -146,8 +147,10 @@ public class AbstractGraphResource
             execution = getAnyExecution(); // Development purposes.
         else
             execution = entityManager.find(WindupExecution.class, executionID);
-        if (null == execution)
-            throw new IllegalArgumentException("Windup execution not found, ID: " + executionID);
+        if (null == execution) {
+            String availExecs = getExecutions().stream().map(ex -> "" + ex.getId()).collect(Collectors.joining(" "));
+            throw new IllegalArgumentException("Windup execution not found, ID: " + executionID + "\n    Existing: [" + availExecs + "]");
+        }
         return getGraphForExecution(execution);
     }
 
