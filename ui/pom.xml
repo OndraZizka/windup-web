@@ -262,8 +262,27 @@
                 </plugins>
             </build>
         </profile>
-        
-        
+
+        <profile>
+            <id>tscNoFail</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>tsc</id>
+                                <configuration>
+                                    <successCodes>0,2</successCodes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>arquillian-wildfly-10-managed</id>
             <activation>
