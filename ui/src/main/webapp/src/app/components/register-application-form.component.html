@@ -2,23 +2,24 @@
 
 <h1>Add an application to the group</h1>
 
-<ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#tabRegister">Register local application file or directory</a></li>
-    <li><a data-toggle="tab" href="#tabUpload">Upload application file</a></li>
+<!-- Tabs -->
+<ul id="addAppModeTabs" class="nav nav-tabs">
+    <li role="presentation" class="active"><a role="tab" data-toggle="tab" aria-controls="tabContentRegister" href="#tabContentRegister">Register local application file or directory</a></li>
+    <li role="presentation"               ><a role="tab" data-toggle="tab" aria-controls="tabContentUpload"   href="#tabContentUpload">Upload application file</a></li>
 </ul>
+
 
 <form [formGroup]="registrationForm" (ngSubmit)="register()"  class="form-horizontal" ng2FileDrop [uploader]="multipartUploader">
 
-    <div class="tab-content">
-        <!-- Register -->
-        <div>
-            This registers the application which is accessible on the server where Windup runs.
-
-        </div>
-        <div id="tabContentRegister" class="tab-pane fade in active">
+    <div id="addAppsModeTabsContent" class="tab-content">
+        <!-- Register tab panel -->
+        <div role="tabpanel" id="tabContentRegister" class="tab-pane fade in active">
+            <div class="form-group">
+                This registers the application which is accessible on the server where Windup runs.
+            </div>
             <div class="form-group" [ngClass]="{'has-error': hasError(registrationForm.get('appPathToRegister'))}">
                 <label class="col-md-2 control-label" for="appPathToRegister">Local application file</label>
-                <div class="col-md-6">
+                <div class="col-md-10">
                     <input  [(ngModel)]="fileInputPath" id="appPathToRegister" formControlName="appPathToRegister"
                             type="text"
                             class="form-control" />
@@ -28,7 +29,7 @@
                 </div>
             </div>
             <div class="form-group"  *ngIf="isAllowUploadMultiple">
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-md-offset-2 col-sm-10">
                     <div class="checkbox">
                         <label>
                             <input [(ngModel)]="isDirectory" formControlName="isDirectory" type="checkbox">
@@ -39,18 +40,18 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-md-10 col-md-offset-2">
+                <div class="col-md-10">
                     <button class="btn btn-primary" type="submit" (click)="mode='REGISTER_PATH'">Register the application</button>
                     <button (click)="cancelRegistration()" type="button" class="btn btn-default">Cancel</button>
                 </div>
             </div>
         </div>
 
-        <!-- Upload -->
-        <div id="tabContentUpload" class="tab-pane fade">
+        <!-- Upload tab panel -->
+        <div role="tabpanel" id="tabContentUpload" class="tab-pane fade">
             <div class="form-group" [ngClass]="{'has-error': hasError(registrationForm.get('fileUpload'))}">
-                <label class="col-md-2 control-label" for="fileUpload">Upload Application</label>
-                <div class="col-md-6">
+                <label class="col-md-2 control-label" for="fileUpload">Application to upload</label>
+                <div class="col-md-8">
                     <input id="fileUpload" type="file" [attr.multiple]="isAllowUploadMultiple ? true : null" ng2FileSelect [uploader]="multipartUploader" class="form-control" name="files" />
                     <div ng2FileDrop [uploader]="multipartUploader" style="border: dotted 3px lightgray;" class="well">
                         <strong>Drop files here</strong>
@@ -58,17 +59,21 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-md-offset-2">
-                <wu-upload-queue *ngIf="isAllowUploadMultiple" [uploader]="multipartUploader"></wu-upload-queue>
-                <wu-upload-progressbar [uploader]="multipartUploader"></wu-upload-progressbar>
-            </div>
-
             <div class="form-group">
-                <div class="col-md-10 col-md-offset-2">
+                <div class="col-md-10">
                     <button class="btn btn-primary" type="submit" (click)="mode='UPLOAD'">Upload the application</button>
                     <button (click)="cancelRegistration()" type="button" class="btn btn-default">Cancel</button>
                 </div>
             </div>
+
+            <div class="col-md-10">
+                <h4>Upload queue</h4>
+                <wu-upload-queue *ngIf="isAllowUploadMultiple" [uploader]="multipartUploader"></wu-upload-queue>
+                
+                <h4>Upload progress</h4>
+                <wu-upload-progressbar [uploader]="multipartUploader"></wu-upload-progressbar>
+            </div>
+
         </div>
     </div>
 

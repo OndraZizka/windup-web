@@ -1,7 +1,7 @@
-import {Component, Input, OnInit, ElementRef, Renderer, NgZone, OnDestroy} from "@angular/core";
+import { Component, Input, OnInit, ElementRef, Renderer, NgZone, OnDestroy, AfterViewInit} from "@angular/core";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {FileUploader} from 'ng2-file-upload/ng2-file-upload';
+import {FileUploader} from "ng2-file-upload/ng2-file-upload";
 
 import {RegisteredApplication, RegistrationType} from "windup-services";
 import {RegisteredApplicationService} from "../services/registered-application.service";
@@ -16,9 +16,9 @@ import {Constants} from "../constants";
 //export type AppRegisterMode = "UPLOAD" | "REGISTER_PATH";
 
 @Component({
-    templateUrl: './register-application-form.component.html'
+    templateUrl: "./register-application-form.component.html"
 })
-export class RegisterApplicationFormComponent extends FormComponent implements OnInit, OnDestroy
+export class RegisterApplicationFormComponent extends FormComponent implements OnInit, OnDestroy, AfterViewInit
 {
     protected registrationForm: FormGroup;
     private applicationGroup:  ApplicationGroup;
@@ -30,8 +30,8 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
     protected isAllowUploadMultiple: boolean = true;
 
     protected labels = {
-        heading: 'Register Application',
-        submitButton: 'Upload'
+        heading: "Register Application",
+        submitButton: "Upload"
     };
 
     constructor(
@@ -45,7 +45,28 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
         this.multipartUploader = _registeredApplicationService.getMultipartUploader();
     }
 
-    ngOnInit():any {
+    ngAfterViewInit(): any {
+        $("#addAppModeTabs a").click(function (event) {
+            console.warn("tab click", this, event);
+            event.preventDefault();
+            $(this).tab("show");
+        })
+    }
+
+    ngOnInit(): any {
+        /*
+	$("#addAppModeTabs  li").click(function(){
+            console.warn("tab click", this, event);
+            var tabID = $(this).attr("data-tab");
+
+            $("#addAppModeTabs li").removeClass("active");
+            $("#addAppsModeTabsContent").removeClass("active");
+
+            $(this).addClass("active");
+            $("#"+tabID).addClass("active");
+	})
+        */
+
         this.registrationForm = this._formBuilder.group({
             appPathToRegister: ["", Validators.compose([Validators.required, Validators.minLength(4)]), FileExistsValidator.create(this._fileService)],
             isDirectory: []
