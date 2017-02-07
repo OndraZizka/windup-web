@@ -3,7 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FileUploader} from 'ng2-file-upload/ng2-file-upload';
 
-import {RegisteredApplication} from "windup-services";
+import {RegisteredApplication, RegistrationType} from "windup-services";
 import {RegisteredApplicationService} from "../services/registered-application.service";
 import {FileExistsValidator} from "../validators/file-exists.validator";
 import {FileService} from "../services/file.service";
@@ -12,28 +12,22 @@ import {ApplicationGroup} from "windup-services";
 import {FormComponent} from "./form.component";
 import {Constants} from "../constants";
 
+
+//export type AppRegisterMode = "UPLOAD" | "REGISTER_PATH";
+
 @Component({
     templateUrl: './register-application-form.component.html'
 })
-export class RegisterApplicationFormComponent extends FormComponent implements OnInit, OnDestroy {
-    registrationForm: FormGroup;
-
-    applicationGroup: ApplicationGroup;
-    application: RegisteredApplication;
-    multipartUploader: FileUploader;
-    mode:string = "UPLOADED";
-    fileInputPath:string;
-    isMultiple: boolean = true;
-    isDirectory: boolean = false;
-
-    modeChanged(newMode:string) {
-        this.mode = newMode;
-
-        if (newMode == "UPLOADED")
-            this.labels.submitButton = "Upload";
-        else
-            this.labels.submitButton = "Register";
-    }
+export class RegisterApplicationFormComponent extends FormComponent implements OnInit, OnDestroy
+{
+    protected registrationForm: FormGroup;
+    private applicationGroup:  ApplicationGroup;
+    protected application:       RegisteredApplication;
+    protected multipartUploader: FileUploader;
+    protected mode:              RegistrationType = "UPLOADED";
+    protected fileInputPath:     string;
+    private isDirectory:       boolean = false;
+    protected isAllowUploadMultiple: boolean = true;
 
     protected labels = {
         heading: 'Register Application',
@@ -41,10 +35,10 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
     };
 
     constructor(
-        protected _router:Router,
+        protected _router: Router,
         protected _activatedRoute: ActivatedRoute,
-        protected _fileService:FileService,
-        protected _registeredApplicationService:RegisteredApplicationService,
+        protected _fileService: FileService,
+        protected _registeredApplicationService: RegisteredApplicationService,
         protected _formBuilder: FormBuilder
     ) {
         super();
@@ -53,7 +47,7 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
 
     ngOnInit():any {
         this.registrationForm = this._formBuilder.group({
-            inputPath: ["", Validators.compose([Validators.required, Validators.minLength(4)]), FileExistsValidator.create(this._fileService)],
+            appPathToRegister: ["", Validators.compose([Validators.required, Validators.minLength(4)]), FileExistsValidator.create(this._fileService)],
             isDirectory: []
         });
 
@@ -64,7 +58,7 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
             this.applicationGroup = data.applicationGroup;
             this.multipartUploader.setOptions({
                 url: Constants.REST_BASE + RegisteredApplicationService.REGISTER_APPLICATION_URL + this.applicationGroup.id,
-                method: 'POST',
+                method: "POST",
                 disableMultipart: false
             });
         });
@@ -74,7 +68,18 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
         this.multipartUploader.clearQueue();
     }
 
-    registerByPath() {
+    protected register() {
+        if (this.mode == "PATH") {
+            this.registerPath();
+        } else {
+            this.registerUploaded()
+            return false;
+        }
+    }
+
+
+
+    private registerPath() {
         console.log("Registering path: " + this.fileInputPath);
 
         if (this.isDirectory) {
@@ -91,29 +96,24 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
         }
     }
 
-    register() {
-        if (this.mode == "PATH") {
-            this.registerByPath();
-        } else {
-            if (this.multipartUploader.getNotUploadedItems().length > 0) {
-                this._registeredApplicationService.registerApplication(this.applicationGroup).subscribe(
-                    application => this.rerouteToApplicationList(),
-                    error => this.handleError(<any>error)
-                );
-            } else {
-                this.handleError("Please select file first");
-            }
-
-            return false;
+    private registerUploaded() {
+        if (this.multipartUploader.getNotUploadedItems().length == 0) {
+            this.handleError("Please select file first");
+            return;
         }
+
+        this._registeredApplicationService.registerApplication(this.applicationGroup).subscribe(
+            application => this.rerouteToApplicationList(),
+            error => this.handleError(<any>error)
+        );
     }
 
-    rerouteToApplicationList() {
+    protected rerouteToApplicationList() {
         this.multipartUploader.clearQueue();
         this._router.navigate([`/projects/${this.applicationGroup.migrationProject.id}/groups/${this.applicationGroup.id}`]);
     }
 
-    cancelRegistration() {
+    private cancelRegistration() {
         this.rerouteToApplicationList();
     }
 }
