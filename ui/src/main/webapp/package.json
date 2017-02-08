@@ -70,7 +70,7 @@
     "@angularclass/hmr": "^1.0.1",
     "@angularclass/hmr-loader": "^3.0.2",
     "@types/bootstrap": "^3.3.32",
-    "@types/core-js": "^0.9.0",
+    "@types/core-js": "^0.9.35",
     "@types/jasmine": "^2.2.29",
     "@types/jstree": "^3.3.32",
     "@types/node": "^6.0.38",
