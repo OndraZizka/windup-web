@@ -251,6 +251,12 @@
   version "2.0.40"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.40.tgz#acdd69e29b74cdec15dc3c074bcb064bc1b87213"
 
+"@types/jqueryui@^1.11.32":
+  version "1.11.32"
+  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.11.32.tgz#5a21bdedd6517c21baef754889931b7d27b5fb3e"
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/jstree@^3.3.32":
   version "3.3.34"
   resolved "https://registry.yarnpkg.com/@types/jstree/-/jstree-3.3.34.tgz#1f47e5c5ebd79bc1940af70d8d9bcb61bf20bda1"
@@ -3082,6 +3088,10 @@ jodid25519@^1.0.0:
 jquery-match-height@0.7.0, jquery-match-height@~0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/jquery-match-height/-/jquery-match-height-0.7.0.tgz#351e51f161ccef7de08ae64ada8c8dc5c1890cca"
+
+jquery-ui-dist@^1.12.1:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.12.1.tgz#5c0815d3cc6f90ff5faaf5b268a6e23b4ca904fa"
 
 "jquery@>= 2.1.x", jquery@>=1.7, jquery@>=1.7.0, jquery@>=1.7.1, jquery@>=1.8, jquery@>=1.9.1, jquery@^3.1.1:
   version "3.1.1"

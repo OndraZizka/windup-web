@@ -3,6 +3,9 @@ import {FormBuilder, FormControl, FormGroup, Validators, AsyncValidatorFn} from 
 import {ActivatedRoute, Router} from "@angular/router";
 import {FileUploader} from "ng2-file-upload/ng2-file-upload";
 
+import * as $ from "jquery";
+import "jqueryui";
+
 import {RegisteredApplication, RegistrationType} from "windup-services";
 import {RegisteredApplicationService} from "../services/registered-application.service";
 import {FileExistsValidator} from "../validators/file-exists.validator";
@@ -48,6 +51,7 @@ export class RegisterApplicationFormComponent extends FormComponent implements O
             event.preventDefault();
             $(this).tab("show");
         })
+        $("#addAppModeTabs a").tabs();
     }
 
     /// This is never called.
