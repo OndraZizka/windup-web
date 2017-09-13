@@ -71,6 +71,7 @@
                 </td>
                 <td>{{file.filePath}}</td>
                 <td>{{file.ignoredRegex}}</td>
+                <td>{{getAppThisFileBelongsToRecursively(file).fileName}}</td>
             </tr>
         </ng-template>
     </wu-table>
